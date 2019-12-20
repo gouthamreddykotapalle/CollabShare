@@ -1,0 +1,48 @@
+<html lang="en">
+
+<head>
+    <script type="text/javascript" src="apiGateway-js-sdk/lib/axios/dist/axios.standalone.js"></script>
+    <script type="text/javascript" src="apiGateway-js-sdk/lib/CryptoJS/rollups/hmac-sha256.js"></script>
+    <script type="text/javascript" src="apiGateway-js-sdk/lib/CryptoJS/rollups/sha256.js"></script>
+    <script type="text/javascript" src="apiGateway-js-sdk/lib/CryptoJS/components/hmac.js"></script>
+    <script type="text/javascript" src="apiGateway-js-sdk/lib/CryptoJS/components/enc-base64.js"></script>
+    <script type="text/javascript" src="apiGateway-js-sdk/lib/url-template/url-template.js"></script>
+    <script type="text/javascript" src="apiGateway-js-sdk/lib/apiGatewayCore/sigV4Client.js"></script>
+    <script type="text/javascript" src="apiGateway-js-sdk/lib/apiGatewayCore/apiGatewayClient.js"></script>
+    <script type="text/javascript" src="apiGateway-js-sdk/lib/apiGatewayCore/simpleHttpClient.js"></script>
+    <script type="text/javascript" src="apiGateway-js-sdk/lib/apiGatewayCore/utils.js"></script>
+    <script type="text/javascript" src="apiGateway-js-sdk/apigClient.js"></script>
+    <script type="text/javascript">
+    function securityDetail() {
+        var apigClient = apigClientFactory.newClient();
+        /*var apigClient = apigClientFactory.newClient({
+            accessKey: 'AKIASYXCMKIIJ7CBXGDV',
+            secretKey: '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',
+        });*/
+
+        var params = {
+            'documentId': '146697ea-8759-486d-90f6-3794aeb2ddd6'
+        };
+        var body = "";
+        var additionalParams = {
+            headers: {
+                // you would ideally receive this from the url hash params post login
+                'Authorization': 'eyJraWQiOiJZZWQ3MEYwZWhZTnVtajM5MDRraTdRaXQxVldITkZ3aGlIbUlUeGNSdmk4PSIsImFsZyI6IlJTMjU2In0.eyJhdF9oYXNoIjoiQllTUEZxbmotRHRwS0JsX29pWTEtdyIsInN1YiI6IjRkZjU0NGUxLThjMzYtNGY0MC1iNDM0LTU2ZDI2NjdmNmI1OSIsImNvZ25pdG86Z3JvdXBzIjpbInVzLWVhc3QtMV9ycFVzSHdGSTFfR29vZ2xlIl0sImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC51cy1lYXN0LTEuYW1hem9uYXdzLmNvbVwvdXMtZWFzdC0xX3JwVXNId0ZJMSIsImNvZ25pdG86dXNlcm5hbWUiOiJHb29nbGVfMTE1MjMyMjg2MDcwMDQyMDE1MDM3IiwiZ2l2ZW5fbmFtZSI6IlNoYXNoYW5rIiwiYXVkIjoiMTk2MnJvNDducWpxNW5yZWRzMGV0MzBlNmEiLCJpZGVudGl0aWVzIjpbeyJ1c2VySWQiOiIxMTUyMzIyODYwNzAwNDIwMTUwMzciLCJwcm92aWRlck5hbWUiOiJHb29nbGUiLCJwcm92aWRlclR5cGUiOiJHb29nbGUiLCJpc3N1ZXIiOm51bGwsInByaW1hcnkiOiJ0cnVlIiwiZGF0ZUNyZWF0ZWQiOiIxNTc1NzQ4NTM0OTcyIn1dLCJ0b2tlbl91c2UiOiJpZCIsImF1dGhfdGltZSI6MTU3NjQ2MTQ0NywiZXhwIjoxNTc2NDY1MDQ3LCJpYXQiOjE1NzY0NjE0NDcsImVtYWlsIjoic2ozMDAzQGNvbHVtYmlhLmVkdSJ9.WJ2QVpI7uFc9MhRXCIq95o3DWNZXJ5ccYRCcJLAvViiuA7oIH5XsZk43lvmGZ79wXmndiyoD4fQtRNjbIE0oexhuJLymNt8-Jx8pabnq7FGEf9Fbka3f5h6CiZRGB_h-_Z0XTw3q8CYL10eT3TkG5jc3xI21_fyYvW_6IpMScRhKEwW1XjBxmwqn1qMgMgwoITGK-q4f4NZDC8euM_UDQAzPJVYnzEG7i-oroeDlVNI3Gzm6VvgHhOsSrNYGFl4Q8zVFbVL1Xn8CkGPjVNWRzrNMwkKsundlS7-VUrfkhIiLX8bB2I7ZaL1-yAI6HMNkj0kZkj5pr6vXKpg6wCiwtA'
+            }
+        };
+        var groups;
+
+        apigClient.rootGet(params, body, additionalParams).then(function(result) {
+            console.log(result.data)
+
+        }).catch(function(result) {
+            // Add error callback code here.
+        });
+    }
+    </script>
+</head>
+
+<body onload="securityDetail()">
+</body>
+
+</html>
