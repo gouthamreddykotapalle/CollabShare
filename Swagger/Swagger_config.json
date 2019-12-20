@@ -1,0 +1,641 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Notes",
+    "description": "Notes API for the final Cloud project",
+    "version": "0.1.9"
+  },
+  "servers": [
+    {
+      "url": "http://api.example.com/",
+      "description": "Optional server description, e.g. Main (production) server",
+      "variables": {
+        "basePath": {
+          "default": "/app"
+        }
+      }
+    }
+  ],
+  "paths": {
+    "/search": {
+      "get": {
+        "summary": "Search across documents",
+        "description": "Search across documents",
+        "responses": {
+          "200": {
+            "description": "A JSON array of user names",
+            "headers": {
+              "Access-Control-Allow-Origin": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Access-Control-Allow-Methods": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Access-Control-Allow-Headers": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "$ref": "#/components/schemas/Page"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "query",
+            "name": "q",
+            "schema": {
+              "type": "string"
+            },
+            "description": "search text"
+          }
+        ]
+      }
+    },
+    "/group": {
+      "post": {
+        "summary": "Add a new group",
+        "requestBody": {
+          "description": "Create a new group",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Group"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Created",
+            "headers": {
+              "Access-Control-Allow-Origin": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Access-Control-Allow-Methods": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Access-Control-Allow-Headers": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "$ref": "#/components/schemas/Group"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "Gets a group",
+        "description": "Gets a group or lists all the groups",
+        "responses": {
+          "200": {
+            "description": "A JSON array of all the groups",
+            "headers": {
+              "Access-Control-Allow-Origin": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Access-Control-Allow-Methods": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Access-Control-Allow-Headers": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "$ref": "#/components/schemas/Group"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "query",
+            "name": "q",
+            "schema": {
+              "type": "string"
+            },
+            "description": "GroupID"
+          }
+        ]
+      }
+    },
+    "/group/user/{userId}": {
+      "delete": {
+        "summary": "Remove a user from group",
+        "responses": {
+          "200": {
+            "description": "Remove a user from group",
+            "headers": {
+              "Access-Control-Allow-Origin": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Access-Control-Allow-Methods": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Access-Control-Allow-Headers": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Empty"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "required": true,
+            "name": "userId",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Id of the person to be removed"
+          }
+        ]
+      }
+    },
+    "/group/user": {
+      "post": {
+        "summary": "Add a user to group",
+        "requestBody": {
+          "description": "Create a new group",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Person"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Add a user to group",
+            "headers": {
+              "Access-Control-Allow-Origin": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Access-Control-Allow-Methods": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Access-Control-Allow-Headers": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Empty"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "required": true,
+            "name": "groupId",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Id of the person to be removed"
+          }
+        ]
+      }
+    },
+    "/document": {
+      "post": {
+        "summary": "Upload a new document",
+        "requestBody": {
+          "description": "Upload a new document",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Document"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Uploaded",
+            "headers": {
+              "Access-Control-Allow-Origin": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Access-Control-Allow-Methods": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Access-Control-Allow-Headers": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/Document"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "Gets a Document",
+        "description": "Gets a document or lists all the documents",
+        "responses": {
+          "200": {
+            "description": "A JSON array of all the groups",
+            "headers": {
+              "Access-Control-Allow-Origin": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Access-Control-Allow-Methods": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Access-Control-Allow-Headers": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "$ref": "#/components/schemas/Document"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "query",
+            "name": "q",
+            "schema": {
+              "type": "string"
+            },
+            "description": "DocumentID"
+          }
+        ]
+      }
+    },
+    "/document/{documentId}": {
+      "delete": {
+        "summary": "Remove a document",
+        "responses": {
+          "200": {
+            "description": "Remove a document",
+            "headers": {
+              "Access-Control-Allow-Origin": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Access-Control-Allow-Methods": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Access-Control-Allow-Headers": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Empty"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "required": true,
+            "name": "documentId",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Id of the document to be deleted"
+          }
+        ]
+      }
+    },
+    "/comment": {
+      "post": {
+        "summary": "Add a new comment",
+        "requestBody": {
+          "description": "Add a new comment",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Comment"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Added",
+            "headers": {
+              "Access-Control-Allow-Origin": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Access-Control-Allow-Methods": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Access-Control-Allow-Headers": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/Comment"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/comment/{commentId}": {
+      "delete": {
+        "summary": "Remove a comment",
+        "responses": {
+          "200": {
+            "description": "Remove a comment",
+            "headers": {
+              "Access-Control-Allow-Origin": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Access-Control-Allow-Methods": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Access-Control-Allow-Headers": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Empty"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "required": true,
+            "name": "commentId",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Id of the comment to be deleted"
+          }
+        ]
+      },
+      "put": {
+        "summary": "update a comment",
+        "responses": {
+          "200": {
+            "description": "update a comment",
+            "headers": {
+              "Access-Control-Allow-Origin": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Access-Control-Allow-Methods": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Access-Control-Allow-Headers": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Empty"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "required": true,
+            "name": "commentId",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Id of the comment to be update"
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Person": {
+        "type": "object",
+        "properties": {
+          "emailID": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "userID": {
+            "type": "string"
+          }
+        }
+      },
+      "Comment": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "owner": {
+            "type": "object",
+            "$ref": "#/components/schemas/Person"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "datetime"
+          }
+        }
+      },
+      "Page": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "index": {
+            "type": "integer"
+          },
+          "url": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          },
+          "parent": {
+            "type": "string"
+          },
+          "comments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Comment"
+            }
+          }
+        }
+      },
+      "Document": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "owner": {
+            "type": "object",
+            "$ref": "#/components/schemas/Person"
+          },
+          "pages": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Page"
+            }
+          }
+        }
+      },
+      "Group": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "members": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Person"
+            }
+          }
+        }
+      },
+      "Empty": {
+             "title": "Empty Schema",
+             "type": "object"
+           }
+    }
+  }
+}
