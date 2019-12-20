@@ -1,0 +1,228 @@
+<html>
+
+<head>
+    <script type="text/javascript" src="apiGateway-js-sdk/lib/axios/dist/axios.standalone.js"></script>
+    <script type="text/javascript" src="apiGateway-js-sdk/lib/CryptoJS/rollups/hmac-sha256.js"></script>
+    <script type="text/javascript" src="apiGateway-js-sdk/lib/CryptoJS/rollups/sha256.js"></script>
+    <script type="text/javascript" src="apiGateway-js-sdk/lib/CryptoJS/components/hmac.js"></script>
+    <script type="text/javascript" src="apiGateway-js-sdk/lib/CryptoJS/components/enc-base64.js"></script>
+    <script type="text/javascript" src="apiGateway-js-sdk/lib/url-template/url-template.js"></script>
+    <script type="text/javascript" src="apiGateway-js-sdk/lib/apiGatewayCore/sigV4Client.js"></script>
+    <script type="text/javascript" src="apiGateway-js-sdk/lib/apiGatewayCore/apiGatewayClient.js"></script>
+    <script type="text/javascript" src="apiGateway-js-sdk/lib/apiGatewayCore/simpleHttpClient.js"></script>
+    <script type="text/javascript" src="apiGateway-js-sdk/lib/apiGatewayCore/utils.js"></script>
+    <script type="text/javascript" src="apiGateway-js-sdk/apigClient.js"></script>
+    <meta name="google-signin-scope" content="profile email">
+    <meta name="google-signin-client_id" content="423968870131-ofkfghqlummbb2t5p4cluhij96o62b84.apps.googleusercontent.com">
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <!--    <script src="https://sdk.amazonaws.com/js/aws-sdk-2.585.0.min.js"></script> -->
+    <script type="text/javascript" src="js/cookie.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+    function groupSelected(e) {
+        var id = e.target.parentElement.parentid;
+        //redirect as required to list notes belonging to that group
+    }
+
+
+    function createUserDiv(user, ownerId) {
+        var templateDiv = document.getElementById('template-group-item-div')
+        var elem = templateDiv.cloneNode(true)
+        elem.setAttribute('class', 'list-group-item list-group-item-action');
+        elem.setAttribute('id', user['personId'])
+        elem.setAttribute('style', 'visibility:visible;margin-top:20px;display:block;margin-left:auto;margin-right:auto;width:50%;border-radius:15px;');
+
+        var groupNameDiv = elem.getElementsByClassName('group-name')[0]
+        var groupDescriptionDiv = elem.getElementsByClassName('group-description')[0]
+        var deleteIconDiv = elem.getElementsByClassName('group-delete-icon')[0]
+
+        groupNameDiv.innerHTML = user['name']
+
+        deleteIconDiv.onclick = removeUserFromGroup;
+
+        var check = isOwnerOfGroup(ownerId);
+        if (!check || (check && user['personId'] == ownerId))
+            elem.removeChild(deleteIconDiv)
+
+        groupDescriptionDiv.innerHTML = user['email']
+
+        var parent = document.getElementById('group-list')
+        if (parent)
+            parent.appendChild(elem)
+    }
+
+    function isOwnerOfGroup(userId) {
+        return userId == docCookies.getItem('userID');
+    }
+
+    function addUserToGroup() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const groupId = urlParams.get('groupId');
+
+        var email = document.getElementsByClassName('group-name')[0].value
+
+        var apigClient = apigClientFactory.newClient();
+        var apigClient = apigClientFactory.newClient({
+            accessKey: 'AKIASYXCMKIIJ7CBXGDV',
+            secretKey: '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',
+        });
+
+        var email = email;
+        var params = {
+            'groupId': groupId
+        };
+        var body = {
+            'email': email
+        };
+        var additionalParams = "";
+        var groups;
+        //continue
+        apigClient.groupGroupIdUserPost(params, body, additionalParams).then(function(result) {
+            var ownerId = result.data.ownerId;
+            var person = result.data.person;
+            createUserDiv(person, ownerId)
+        }).catch(function(result) {
+            // Add error callback code here.
+        });
+    }
+
+    function removeUserFromGroup(e) {
+        const urlParams = new URLSearchParams(window.location.search);
+        const groupId = urlParams.get('groupId');
+
+        var id = e.target.parentElement.parentElement.parentElement.id;
+        //aws call to delete id and update UI
+        //delete from ui
+        var apigClient = apigClientFactory.newClient();
+        var apigClient = apigClientFactory.newClient({
+            accessKey: 'AKIASYXCMKIIJ7CBXGDV',
+            secretKey: '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',
+        });
+
+        var userId = id;
+        var params = {
+            'userid': id,
+            'groupId': groupId
+        };
+        var body = "";
+        var additionalParams = "";
+        var groups;
+        apigClient.groupGroupIdUserUseridDelete(params, body, additionalParams).then(function(result) {
+            var elem = document.getElementById(id)
+            var parent = elem.parentElement
+            parent.removeChild(elem)
+        }).catch(function(result) {
+            // Add error callback code here.
+        });
+    }
+
+    function loadUsers() {
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const groupId = urlParams.get('groupId');
+        if (groupId != null) {
+            //show users for a particular group
+            //aws call to fetch all groups
+            var apigClient = apigClientFactory.newClient();
+            var apigClient = apigClientFactory.newClient({
+                accessKey: 'AKIASYXCMKIIJ7CBXGDV',
+                secretKey: '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',
+            });
+
+            var params = {
+                'groupId': groupId
+            };
+            var body = "";
+            var additionalParams = "";
+            var groups;
+            apigClient.groupUserGet(params, body, additionalParams).then(function(result) {
+                var users = result.data.persons;
+                var ownerId = result.data.ownerId;
+                users.forEach(function(user) {
+                    //fill up code
+                    createUserDiv(user["Item"], ownerId);
+                });
+            }).catch(function(result) {
+                // Add error callback code here.
+            });
+        }
+    }
+
+    function deleteUser(e) {
+        var id = e.target.parentElement.parentElement.parentElement.id;
+        //aws call to delete id and update UI
+        //delete from ui
+        var apigClient = apigClientFactory.newClient();
+        var apigClient = apigClientFactory.newClient({
+            accessKey: 'AKIASYXCMKIIJ7CBXGDV',
+            secretKey: '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',
+        });
+
+        var groupId = id;
+        var emailId = docCookies.getItem('email');
+
+        var params = {
+            'groupId': id,
+            'emailId': emailId
+        };
+        var body = "";
+        var additionalParams = "";
+        var groups;
+        apigClient.groupDelete(params, body, additionalParams).then(function(result) {
+            //success
+        }).catch(function(result) {
+            // Add error callback code here.
+        });
+    }
+    </script>
+</head>
+
+<body onload="loadUsers()">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="#">NoteShare</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="./index.html">Home <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="./search.html">Search</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link" href="./test_boot.html">Upload</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link" href="./test_document_list.html">Groups</a>
+                </li>
+                <li class="nav-item">
+                    <button class="btn btn-outline-Danger my-2 my-sm-0" type="Logout" onclick="logout()">Logout</button>
+                </li>
+            </ul>
+            <form class="form-inline my-2 my-lg-0">
+                <!--<input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">-->
+            </form>
+        </div>
+    </nav>
+    <div class='add-group'>
+        <input type="text" style="margin-top:20px;display:block;margin-left:auto;margin-right:auto;width:50%;border-radius:15px;" class="form-control group-name" placeholder="User Name" aria-label="GroupName" aria-describedby="basic-addon1">
+        <button type="button" style="display:block;margin-left:auto;margin-right:auto;margin-top:20px;margin-bottom: 15px" class="btn btn-primary add-group-button" onclick="addUserToGroup()">Add User</button>
+    </div>
+    <div id='group-list' class="list-group d-flex groups-list">
+        <div style='visibility: hidden;margin-top:20px;display:block;margin-left:auto;margin-right:auto;width:50%;border-radius:15px;' id='template-group-item-div' class="list-group-item list-group-item-action">
+            <div class='group-name'></div>
+            <div class='group-description'></div>
+            <div class='group-delete-icon'>
+                <svg style="width:20px; height:20px" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                    <image href="./assets/delete.svg" />
+                </svg>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

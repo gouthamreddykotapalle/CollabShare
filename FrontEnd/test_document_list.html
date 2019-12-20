@@ -1,0 +1,107 @@
+<html>
+
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="css/import_style.css">
+    <script src="./js/documents.js"></script>
+    <script src="./js/cookie.js"></script>
+    <script src="https://sdk.amazonaws.com/js/aws-sdk-2.283.1.min.js"></script>
+    <script src="./js/index.js"></script>
+    <script type="text/javascript" src="apiGateway-js-sdk/lib/axios/dist/axios.standalone.js"></script>
+    <script type="text/javascript" src="apiGateway-js-sdk/lib/CryptoJS/rollups/hmac-sha256.js"></script>
+    <script type="text/javascript" src="apiGateway-js-sdk/lib/CryptoJS/rollups/sha256.js"></script>
+    <script type="text/javascript" src="apiGateway-js-sdk/lib/CryptoJS/components/hmac.js"></script>
+    <script type="text/javascript" src="apiGateway-js-sdk/lib/CryptoJS/components/enc-base64.js"></script>
+    <script type="text/javascript" src="apiGateway-js-sdk/lib/url-template/url-template.js"></script>
+    <script type="text/javascript" src="apiGateway-js-sdk/lib/apiGatewayCore/sigV4Client.js"></script>
+    <script type="text/javascript" src="apiGateway-js-sdk/lib/apiGatewayCore/apiGatewayClient.js"></script>
+    <script type="text/javascript" src="apiGateway-js-sdk/lib/apiGatewayCore/simpleHttpClient.js"></script>
+    <script type="text/javascript" src="apiGateway-js-sdk/lib/apiGatewayCore/utils.js"></script>
+    <script type="text/javascript" src="apiGateway-js-sdk/apigClient.js"></script>
+</head>
+<!------ Include the above in your HEAD tag ---------->
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">NoteShare</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="./index.html">Home <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="./search.html">Search</a>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link" href="./test_boot.html">Upload</a>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link active" href="./test_document_list.html">Groups</a>
+            </li>
+            <li class="nav-item">
+                <button class="btn btn-outline-Danger my-2 my-sm-0" type="Logout" onclick="logout()">Logout</button>
+            </li>
+        </ul>
+        <form class="form-inline my-2 my-lg-0">
+            <!--<input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">-->
+        </form>
+    </div>
+</nav>
+<!--start-->
+
+<body onload="loadGroups()">
+    <div class='add-group'>
+        <div style='display: none' class="form-group">
+            <input type="text" style="margin-bottom: 30px;margin-top: 30px;font-size: small;" class="form-control group-name" placeholder="Group Name" aria-label="GroupName" aria-describedby="basic-addon1">
+            <input type="text" style="margin-bottom: 30px;" class="form-control group-members" placeholder="Group Members (, separated)" aria-label="GroupMembers" aria-describedby="basic-addon1">
+            <textarea class="form-control group-desc" id="exampleFormControlTextarea1" rows="3"></textarea>
+        </div>
+        <button type="button" style="margin-left: 37%;margin-top: 5%" class="btn btn-primary add-group-button" onclick="createGroup()">Create Group</button>
+    </div>
+    <div id='group-list' class="list-group d-flex groups-list">
+        <div style='height: 100px;visibility: hidden;' id='template-group-item-div' class="list-group-item list-group-item-action">
+            <div class='group-name'>ddaasdas</div>
+            <div class='group-description'>asaasa</div>
+            <div class='group-delete-icon'>
+                <svg style="width:20px; height:20px" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                    <image href="./assets/delete.svg" />
+                </svg>
+            </div>
+            <div class='group-users-icon'>
+                <svg style="width:20px; height:20px" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                    <image href="./assets/people.svg" />
+                </svg>
+            </div>
+            <div class='group-notes-icon'>
+                <svg style="width:20px; height:20px" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                    <image href="./assets/notes.svg" />
+                </svg>
+            </div>
+        </div>
+    </div>
+    <div class="container" style="margin-top: 10%">
+        <div class="list-group" id="listdocs">
+            <a style="height: 60px;display: none;" href="#" class="list-group-item active">
+                <div>Document 0</div>
+                <div class='group-delete-icon'>
+                    <svg style="width:20px; height:20px" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                        <image href="./assets/delete.svg" />
+                    </svg>
+                </div>
+            </a>
+            <a style="height: 60px;display: none;" href="#" class="list-group-item">
+                <div>Document 1</div>
+                <div class='group-delete-icon'>
+                    <svg style="width:20px; height:20px" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                        <image href="./assets/delete.svg" />
+                    </svg>
+                </div>
+            </a>
+        </div>
+    </div>
+</body>
+
+</html>

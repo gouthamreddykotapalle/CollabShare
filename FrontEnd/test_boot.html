@@ -1,0 +1,96 @@
+<html>
+
+<head>
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <script src="./js/cookie.js"></script>
+    <script src="./js/test.js"></script>
+    <script type="text/javascript" src="apiGateway-js-sdk/lib/axios/dist/axios.standalone.js"></script>
+    <script type="text/javascript" src="apiGateway-js-sdk/lib/CryptoJS/rollups/hmac-sha256.js"></script>
+    <script type="text/javascript" src="apiGateway-js-sdk/lib/CryptoJS/rollups/sha256.js"></script>
+    <script type="text/javascript" src="apiGateway-js-sdk/lib/CryptoJS/components/hmac.js"></script>
+    <script type="text/javascript" src="apiGateway-js-sdk/lib/CryptoJS/components/enc-base64.js"></script>
+    <script type="text/javascript" src="apiGateway-js-sdk/lib/url-template/url-template.js"></script>
+    <script type="text/javascript" src="apiGateway-js-sdk/lib/apiGatewayCore/sigV4Client.js"></script>
+    <script type="text/javascript" src="apiGateway-js-sdk/lib/apiGatewayCore/apiGatewayClient.js"></script>
+    <script type="text/javascript" src="apiGateway-js-sdk/lib/apiGatewayCore/simpleHttpClient.js"></script>
+    <script type="text/javascript" src="apiGateway-js-sdk/lib/apiGatewayCore/utils.js"></script>
+    <script type="text/javascript" src="apiGateway-js-sdk/apigClient.js"></script>
+    <script src="https://sdk.amazonaws.com/js/aws-sdk-2.283.1.min.js"></script>
+    <script src="./js/index.js"></script>
+</head>
+<!------ Include the above in your HEAD tag ---------->
+
+<body onload='populateGroupsDropdown()'>
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#">NoteShare</a>
+            </div>
+            <ul class="nav navbar-nav">
+                <li class="active"><a href="./index.html">Home</a></li>
+                <li><a href="./search.html">Search</a></li>
+                <li><a href="./test_boot.html">Upload</a></li>
+                <li><a class="nav-link" href="./test_document_list.html">Groups</a></li>
+            </ul>
+            <button class="btn btn-danger navbar-btn" onclick="logout()">Logout</button>
+        </div>
+    </nav>
+    <div class="container" style="margin-top: 10%">
+        <div class="panel panel-default">
+            <div class="panel-heading"><strong>Upload Files</strong> <small id="status">Please select the files to upload</small> </div>
+            <div class="btn-group">
+                <div style='margin-top: 15%; margin-left: 10%; width: 170px' class="dropdown">
+                    <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                        Select Group
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu groups-dropdown-menu" aria-labelledby="dropdownMenu1">
+                        <!--<li><a href="#">Action</a></li>
+              <li><a href="#">Another action</a></li>
+              <li><a href="#">Something else here</a></li>
+              <li role="separator" class="divider"></li>
+              <li><a href="#">Separated link</a></li>-->
+                    </ul>
+                </div>
+            </div>
+            <div class="btn-group">
+                <input id="docname" style="margin-top: 15%;margin-left: 10%; width: 170px;border-radius: 10px;" placeholder="Document Name:" class="form-control group-name" type="text">
+            </div>
+            <div class="panel-body">
+                <!-- Standar Form -->
+                <h4>Select files from your computer</h4>
+                <form action="javascript:void(0);" onsubmit="send();" method="post" id="js-upload-form">
+                    <div class="form-inline">
+                        <div class="form-group">
+                            <input type="file" name="files[]" id="js-upload-files" accept="image/*" multiple>
+                        </div>
+                        <button type="submit" class="btn btn-sm btn-primary" id="js-upload-submit">Upload files</button>
+                    </div>
+                </form>
+                <!-- Drop Zone -->
+                <h4>Or drag and drop files below</h4>
+                <div class="upload-drop-zone" id="drop-zone">
+                    Just drag and drop files here
+                </div>
+                <!-- Progress Bar -->
+                <div class="progress">
+                    <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%;">
+                        <span class="sr-only">60% Complete</span>
+                    </div>
+                </div>
+                <!-- Upload Finished -->
+                <div class="js-upload-finished">
+                    <h3>Processed files</h3>
+                    <div class="list-group" id="finished">
+                        <a href="#" style="visibility: hidden;" class="list-group-item list-group-item-success"><span class="badge alert-success pull-right">Success</span>image-01.jpg</a>
+                        <a href="#" style="visibility: hidden;" class="list-group-item list-group-item-success"><span class="badge alert-success pull-right">Success</span>image-02.jpg</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> <!-- /container -->
+</body>
+
+</html>

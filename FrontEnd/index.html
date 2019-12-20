@@ -1,0 +1,131 @@
+<html lang="en">
+
+<head>
+    <meta name="google-signin-scope" content="profile email">
+    <meta name="google-signin-client_id" content="423968870131-ofkfghqlummbb2t5p4cluhij96o62b84.apps.googleusercontent.com">
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <script src="https://sdk.amazonaws.com/js/aws-sdk-2.585.0.min.js"></script>
+    <script type="text/javascript" src="./js/cookie.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="./css/style.css">
+    <script src="./js/index.js"></script>
+    <script>
+        function checkCredentials(){
+          var isSignedIn = isCookieSet('userID') && isCookieSet('access_token');
+          if(isSignedIn)
+          {
+            window.location.href = 'https://s3.amazonaws.com/frontend.noteshare/search.html' 
+          }
+          else{
+            //check if this was a sign-in attempt
+            var id_token = getHashParams('id_token');
+            const access_token = getHashParams('access_token');
+            const expiration = getHashParams('expires_in');
+            if(id_token && id_token.length > 0){
+              //To do: Validate the authenticity of the JWT token
+              id_token = parseJwt(id_token)
+              setCookie('userID', id_token['cognito:username'], expiration)
+              setCookie('email', id_token['email'], expiration)
+              setCookie('access_token', access_token, expiration)
+              //TO DO: Modify redirect URI post hosting on S3 //if logged in
+              window.location.href = 'https://s3.amazonaws.com/frontend.noteshare/search.html'        
+              return true;
+            }
+          }
+          return false;
+      }
+
+
+      function processRequest() {
+
+        /*directly make aws request with access_token(fetched from cookie) as part of Authorization header*/
+        const id_token = gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().id_token
+
+        AWS.config.region = 'us-east-1'; // Region
+        AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+            IdentityPoolId: 'us-east-1:7ff285b3-a7e9-4b2b-82bd-8bd8104365e4',
+            Logins: { // optional tokens, used for authenticated login
+                'accounts.google.com': id_token
+            },
+        });
+
+        // Make the call to obtain credentials
+        response = AWS.config.credentials.get(function(err) {
+            if (err) console.log(err.secretAccessKey)
+            // Credentials will be available when this function is called.
+            var accessKeyId = AWS.config.credentials.accessKeyId;
+            var secretAccessKey = AWS.config.credentials.secretAccessKey;
+            var sessionToken = AWS.config.credentials.sessionToken;
+        });
+      }
+
+      function isCookieSet(key) {
+          var cookieVal = docCookies.getItem(key);
+          return cookieVal && cookieVal != "";
+      }
+
+      function getCookieValue(key) {
+          return docCookies.getItem(key);
+      }
+
+      //expiration is in seconds
+      function setCookie(key, val, expiration) {
+          var date = new Date();
+          date.setTime(date.getTime() + (expiration * 1000));
+
+          docCookies.setItem(key, val, date)
+      }
+
+      function getHashParams(paramName) {
+          var hash = window.location.hash;
+          if (hash.length != 0) {
+              hash = hash.substr(1)
+              var array = hash.split("&");
+              var values, formData = {};
+              for (var i = 0; i < array.length; i += 1) {
+                  values = array[i].split("=");
+                  formData[values[0]] = values[1];
+              }
+              console.log(formData)
+              return formData[paramName];
+          }
+      }
+
+      function parseJwt(token) {
+          //var token = "eyJraWQiOiJZZWQ3MEYwZWhZTnVtajM5MDRraTdRaXQxVldITkZ3aGlIbUlUeGNSdmk4PSIsImFsZyI6IlJTMjU2In0.eyJhdF9oYXNoIjoiVW5MWGhuaDNOOERMU3dGWFJ4UDAxZyIsInN1YiI6ImEyYjI0ZGFhLTIyYWItNDI2ZC05N2JkLTIwMTRiZGYyY2M1NSIsImNvZ25pdG86Z3JvdXBzIjpbInVzLWVhc3QtMV9ycFVzSHdGSTFfR29vZ2xlIl0sImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC51cy1lYXN0LTEuYW1hem9uYXdzLmNvbVwvdXMtZWFzdC0xX3JwVXNId0ZJMSIsImNvZ25pdG86dXNlcm5hbWUiOiJHb29nbGVfMTEyMzIzMjc2NzY5NjU5NTQ3NDM4IiwiZ2l2ZW5fbmFtZSI6IkdvdXRoYW0gUmVkZHkiLCJhdWQiOiIxOTYycm80N25xanE1bnJlZHMwZXQzMGU2YSIsImlkZW50aXRpZXMiOlt7InVzZXJJZCI6IjExMjMyMzI3Njc2OTY1OTU0NzQzOCIsInByb3ZpZGVyTmFtZSI6Ikdvb2dsZSIsInByb3ZpZGVyVHlwZSI6Ikdvb2dsZSIsImlzc3VlciI6bnVsbCwicHJpbWFyeSI6InRydWUiLCJkYXRlQ3JlYXRlZCI6IjE1NzU5MzE4NzY4NjgifV0sInRva2VuX3VzZSI6ImlkIiwiYXV0aF90aW1lIjoxNTc2Mjg1NTQ0LCJleHAiOjE1NzYyODkxNDQsImlhdCI6MTU3NjI4NTU0NCwiZW1haWwiOiJnb3V0YW1rcmVkZHlAZ21haWwuY29tIn0.h5yKXBj9K7lam5PY3MTUdig_wGSsWRZfNoBNhBONhEDOA49lJojoAQMg57KeEZ0P7h5TE7MI0RL2UgOwKqbOXFUhFr3ukdZGjKmp-JpBx0Omf8rN0zBB9HjLs6Igocn4FWFvZx3RwEUMBJisbRKiYOZdeYHjaPbbPflVQiAUDqA3wdLglKmQ7KE_F_Ivp5J7TMzZ8yzq0bcyYkTtcjAZ-xaS_K_OEWoaxV9gxWLBZt3yd5flgtcgV1WQmA0_7-TEUZD4ngv424UnKKm7vSBljGFJkrV-xcOgbNXXGwlIaQrV32X6rPTZs2yGKUqY6emqca9_LAyqehwgmrFodLvRTw";
+          var base64Url = token.split('.')[1];
+          var base64 = base64Url.replace('-', '+').replace('_', '/');
+          var plain_token = JSON.parse(window.atob(base64));
+          return plain_token;
+      };
+    </script>
+</head>
+
+<body onload="checkCredentials()">
+    <!--login container-->
+    <div class="container log_container" style="width: 100%;height: 100%">
+        <div class="row">
+            <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
+                <div class="card card-signin my-5">
+                    <div class="card-body">
+                        <h5 class="card-title text-center">Login to NoteShare</h5>
+                        <form class="form-signin">
+                            <div class="form-label-group">
+                                <img src="./assets/noteshare.png">
+                            </div>
+                            <div class="custom-control custom-checkbox mb-3">
+                                <input type="checkbox" class="custom-control-input" id="customCheck1">
+                            </div>
+                            <hr class="my-4">
+                            <button class="btn btn-lg btn-google btn-block text-uppercase" type="button" onclick="login()"><i class="fab fa-google mr-2"></i> Sign in with Google</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

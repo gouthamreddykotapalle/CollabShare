@@ -1,0 +1,54 @@
+.groups-list {
+    margin: auto;
+    width: 70%;
+    top: 20%;
+}
+
+.group-name {
+    font-size: 30px;
+}
+
+.group-description {
+    font-size: 10px;
+}
+
+.group-delete-icon {
+    float: right;
+    width: 20px;
+    height: 20px;
+}
+
+.group-users-icon {
+    float: right;
+    width: 20px;
+    height: 20px;
+}
+
+.group-notes-icon {
+    float: right;
+    width: 20px;
+    height: 20px;
+}
+
+.add-group {
+    margin: auto;
+    width: 50%
+}
+
+.add-group-button {
+    margin: auto;
+    width: 150px;
+    height: 50px;
+}
+
+.add-group-name {
+    margin: auto;
+    width: 300px;
+    height: 50px;
+}
+
+.add-group-desc {
+    margin: auto;
+    width: 150px;
+    height: 50px;
+}
